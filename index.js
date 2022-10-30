@@ -314,7 +314,7 @@ function toFunction(ejs, options = {}) {
 
 function fromFileToFunctionBody(filePath, options = {}) {
 	const { cwd = process.cwd() } = options;
-	const fullFilePath = Path.join(cwd, `${filePath}.ejs`);
+	const fullFilePath = Path.join(cwd, Path.extname(filePath) !== '.ejs' ? `${filePath}.ejs`: filePath);
 	options.cwd = Path.dirname(fullFilePath);
 	return toFunctionBody(Fs.readFileSync(fullFilePath, { encoding: 'utf8'}), options);
 }
