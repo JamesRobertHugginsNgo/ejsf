@@ -4,13 +4,18 @@ const Fs = require('fs');
 const Path = require('path');
 
 const DEFAULT_ARG_NAME = '_data';
+const DEFAULT_ESC_NAME = '_esc';
+const DEFAULT_OUT_NAME = '_out';
 
 // -----
 // COMPLETE CODE
 // -----
 
 function completeCode(code, options = {}) {
-	const { argName = DEFAULT_ARG_NAME } = options;
+	const {
+		argName = DEFAULT_ARG_NAME,
+		escName = DEFAULT_ESC_NAME,
+	} = options;
 
 	const nodes = [];
 	const outOfScope = [];
@@ -90,12 +95,15 @@ function completeCode(code, options = {}) {
 
 					case 'CallExpression':
 						if (previousNode.callee === node) {
-							if (node.name === '_esc') {
+							if (node.name === escName) {
 								addEsc = true;
 								break;
 							}
 							if (node.name === 'include') {
-								includes.push(previousNode.arguments[0].value);
+								const filePath = previousNode.arguments[0].value;
+								if (includes.indexOf(filePath) === -1) {
+									includes.push(filePath);
+								}
 								break;
 							}
 						} else if (outOfScope.indexOf(node.name) === -1 && !isVariableInScope(node.name)) {
@@ -141,7 +149,7 @@ function completeCode(code, options = {}) {
 
 	// Add esc
 	if (addEsc) {
-		prefix += 'const _esc = (value) => value.replace(/&/g, \'&amp;\').replace(/</g, \'&lt;\').replace(/>/g, \'&gt;\').replace(/"/g, \'&quot;\').replace(/\'/g, "&#x27;").replace(/\\//g, \'&#x2F;\'); ';
+		prefix += `const ${escName} = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, "&#x27;").replace(/\\//g, '&#x2F;'); `;
 	}
 
 	// Add includes
@@ -169,7 +177,10 @@ function completeCode(code, options = {}) {
 // -----
 
 function toFunctionBody(ejs, options = {}) {
-	const { argName = DEFAULT_ARG_NAME } = options;
+	const {
+		escName = DEFAULT_ESC_NAME,
+		outName = DEFAULT_OUT_NAME
+	} = options;
 
 	let output = '';
 	let seg = '';
@@ -180,7 +191,7 @@ function toFunctionBody(ejs, options = {}) {
 	const appendOutputAndSetSegType = (nextSegType = 'HTML') => {
 		switch (segType) {
 			case 'HTML':
-				output += `_out += \`${seg}\`; `;
+				output += `${outName} += \`${seg}\`; `;
 				break;
 
 			case 'SCRIPTLET':
@@ -192,11 +203,11 @@ function toFunctionBody(ejs, options = {}) {
 				break;
 
 			case 'OUTPUT':
-				output += `_out += _esc(${seg}); `;
+				output += `${outName} += ${escName}(${seg}); `;
 				break;
 
 			case 'OUTPUT_UNESCAPED':
-				output += `_out += (${seg}); `;
+				output += `${outName} += (${seg}); `;
 				break;
 
 			case 'COMMENT':
@@ -283,9 +294,9 @@ function toFunctionBody(ejs, options = {}) {
 
 	// Complete output
 	appendOutputAndSetSegType();
-	output = 'let _out = \'\'; ' + output;
-	output = completeCode(output, argName);
-	output += 'return _out;';
+	output = `let ${outName} = ''; ${output}`;
+	output = completeCode(output, options);
+	output += `return ${outName};`;
 
 	return output;
 }
