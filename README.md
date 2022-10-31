@@ -5,7 +5,7 @@ Version 1.0.0
 NodeJS library for converting EJS templates to Javascript functions.
 
 ```
-npm install git+https://github.com/JamesRobertHugginsNgo/ejsf.git
+npm install git+https://github.com/JamesRobertHugginsNgo/ejsf.git#1.0.0
 ```
 
 Usage:
