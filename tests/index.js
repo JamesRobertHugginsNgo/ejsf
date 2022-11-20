@@ -1,28 +1,38 @@
+
+const BabelCore = require('@babel/core');
 const Fs = require('fs');
+const Path = require('path');
 
-// EJS Function
-const Ejsf = require('../index');
+const ejsf = require('../index');
 
-// Data
-const data = {
-	title: 'TITLE & TITLE',
-	subTitle: 'SUB TITLE',
-	body: '<p>Proin sodales dui at quam vehicula, sit amet laoreet dolor interdum. Duis suscipit urna at ligula euismod dapibus. Phasellus quis viverra velit. Nam diam ante, pulvinar vitae ultricies nec, molestie a massa. Maecenas gravida, eros vel finibus vehicula, nibh mauris dictum nunc, eu luctus purus augue ac neque. Mauris eleifend eros quis viverra pretium. Pellentesque non diam tempor, sollicitudin augue id, pellentesque dui.</p>'
-};
+const ejsFilePath = Path.join(__dirname, 'templates/main.ejs');
+const functionString = `module.exports = ${ejsf.fromFileToFunctionString(ejsFilePath)};`;
 
-// Create EJS function
-Fs.writeFile('./results/template.js', `module.exports = ${Ejsf.fromFileToFunctionString('templates/template')};`, (error) => {
+const resultBasePath = Path.join(__dirname, Path.basename(ejsFilePath));
+
+const esFilePath = `${resultBasePath}.es6.js`;
+Fs.writeFileSync(esFilePath, functionString, { encoding: 'utf8' });
+
+BabelCore.transform(functionString, { 'presets': ['@babel/preset-env'] }, (error, result) => {
 	if (error) {
-		return void console.error(error);
+		console.error(error);
+		return;
 	}
 
-	// Use EJS function and data to create HTML
-	Fs.writeFile('./results/template.html', require('./results/template.js')(data), (error) => {
-		if (error) {
-			return void console.error(error);
-		}
+	const jsFilePath = `${resultBasePath}.es5.js`;
+	Fs.writeFileSync(jsFilePath, result.code, { encoding: 'utf8' });
 
-		// Complete
-		console.log('COMPLETE');
-	});
+	const jsRelativeFilePath = Path.relative(__dirname, jsFilePath);
+	const ejsFunction = require(`${jsRelativeFilePath.charAt(0) === '.' ? '' : './'}${jsRelativeFilePath}`);
+
+	const data = {
+		"title": "Title -> Title"
+	};
+
+	const html = ejsFunction(data);
+	const htmlFilePath = `${resultBasePath}.html`;
+	Fs.writeFileSync(htmlFilePath, html, { encoding: 'utf8' });
+
+	console.log('COMPLETE');
 });
+

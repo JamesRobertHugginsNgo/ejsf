@@ -1,78 +1,53 @@
-# Ejsf
+# ejsf
 
 Version 1.0.0
 
-NodeJS library for converting EJS templates to Javascript functions.
+Creates a function (or its string equivalent) from an EJS template. The function accepts one argument which is used as data for the EJS template.
+
+The string equivalent is useful for saving the resulting function into a JavaScript file.
+
+## Installation
 
 ```
-npm install git+https://github.com/JamesRobertHugginsNgo/ejsf.git#1.0.0
+npm install git+https://github.com/JamesNgo-CoT/ejsf.git#1.0.0
 ```
 
-Usage:
+## toFunction(ejsTemplate, options)
+
+- ejsTemplate `string`
+- options `object` Defaults: `'{}'`
+- Returns: `function`
+
+## toFunctionString(ejsTemplate, options)
+
+- ejsTemplate `string`
+- options `object` Defaults: `'{}'`
+- Returns: `string`
+
+## fromFileToFunction(filePath, options)
+
+- filePath `string`
+- options `object` Defaults: `'{}'`
+- Returns: `function`
+
+## fromFileToFunctionString(filePath, options)
+
+- filePath `string`
+- options `object` Defaults: `'{}'`
+- Returns: `string`
+
+## options
+
+- cwd `string` The EJS template's current working directory. Defaults: `process.cwd()`
+- dataArgName `string` Function argument name. Defaults: `DEFAULT_DATA_ARG_NAME`
+- escapeFunctionName `string` HTML escape function name. Defaults: `DEFAULT_ESCAPE_FUNCTION_NAME`
+- isInclude `boolean` Used internally, do not set. Defaults: `false`
+- outputVariableName `string` Output variable name. Defaults: `DEFAULT_DATA_ARG_NAME`
+
+## Constants
 
 ``` JavaScript
-const Ejsf = require('ejsf');
+const DEFAULT_DATA_ARG_NAME = 'data';
+const DEFAULT_ESCAPE_FUNCTION_NAME = 'escapeHtml';
+const DEFAULT_OUTPUT_VARIABLE_NAME = 'output';
 ```
-
-## Ejsf.toFunctionBody(ejs, options)
-
-- ejs `string` EJS template string.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `string`
-
-Takes an EJS template and returns a function body string.
-
-## Ejsf.toFunctionString(ejs, options)
-
-- ejs `string` EJS template string.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `string`
-
-Takes an EJS template and returns a function string.
-
-## Ejsf.toFunction(ejs, options)
-
-- ejs `string` EJS template string.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `function`
-
-Takes an EJS template and returns a function.
-
-## Ejsf.fromFileToFunctionBody(filePath, options)
-
-- filePath `string` Path to the EJS template file.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `string` JavaScript code as string.
-
-Takes an EJS template file and returns a function body string.
-
-## Ejsf.fromFileToFunctionString(filePath, options)
-
-- filePath `string` Path to the EJS template file.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `string` JavaScript code as string.
-
-Takes an EJS template file and returns a function string.
-
-## Ejsf.fromFileToFunction(filePath, options)
-
-- filePath `string` Path to the EJS template file.
-- options `object` _Optional_. See "Common Options". Defaults: `{}`.
-- Returns: `function`
-
-Takes an EJS template file and returns a function.
-
-## Common Options
-
-The optional `option` argument passed in all the `Ejsf` functions.
-
-Type `object`
-
-### Properties
-
-- argName `string` _Optional_. Argument name used by the "EJS" function. Change when the default value is in use. Defaults: `'_data'`.
-- cwd `string` _Optional_. Current working directory, mainly used when determining `include` paths. Defaults: `process.cwd()`.
-- escName `string` _Optional_. Function name used to escape values. Change when the default value is in use. Defaults: `'_esc'`.
-- outName `string` _Optional_. Variable name used to generate the resulting string. Change when the default value is in use. Defaults: `'_out'`.
-
-

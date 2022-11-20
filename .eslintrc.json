@@ -13,6 +13,7 @@
         "ecmaVersion": 2018
     },
     "rules": {
+        "comma-dangle": "warn",
         "semi": "warn"
     }
 }
