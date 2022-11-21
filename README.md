@@ -1,6 +1,6 @@
 # ejsf
 
-Version 1.0.0
+Version 2.0.0
 
 Creates a function (or its string equivalent) from an EJS template. The function accepts one argument which is used as data for the EJS template.
 
@@ -9,7 +9,7 @@ The string equivalent is useful for saving the resulting function into a JavaScr
 ## Installation
 
 ```
-npm install git+https://github.com/JamesNgo-CoT/ejsf.git#1.0.0
+npm install git+https://github.com/JamesNgo-CoT/ejsf.git#2.0.0
 ```
 
 ## toFunction(ejsTemplate, options)
